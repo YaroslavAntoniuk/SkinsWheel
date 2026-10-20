@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="uk">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Kitted Loadout Wheel</title>
+  </head>
+  <body>
+    <main>
+      <header>
+        <h1 id="slot"></h1>
+        <p class="code">Код лоадауту: <span id="code"></span></p>
+      </header>
+      <canvas id="wheel" width="720" height="720"></canvas>
+      <div class="controls">
+        <button id="spin" type="button">Крутити <kbd>Space</kbd></button>
+        <button id="new" type="button">Новий глядач <kbd>N</kbd></button>
+        <label><input id="fast" type="checkbox" /> Швидко (1.5 с)</label>
+      </div>
+      <section id="cards" aria-live="polite"></section>
+      <footer>Симуляція, без виграшів. Не пов'язано з Valve.</footer>
+    </main>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

@@ -1,0 +1,113 @@
+:root {
+  color-scheme: dark;
+  --bg: #0b0d12;
+  --fg: #e8eaf0;
+  --muted: #8a90a2;
+  --panel: #161a23;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font: 16px/1.4 system-ui, sans-serif;
+}
+
+main {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 16px;
+  display: grid;
+  gap: 16px;
+  justify-items: center;
+}
+
+header {
+  text-align: center;
+}
+
+h1 {
+  margin: 0;
+  font-size: clamp(28px, 6vw, 48px);
+}
+
+.code {
+  margin: 4px 0 0;
+  color: var(--muted);
+}
+
+canvas {
+  width: min(100%, 720px);
+  height: auto;
+  aspect-ratio: 1;
+}
+
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  justify-content: center;
+}
+
+button {
+  font: inherit;
+  font-weight: 600;
+  padding: 12px 20px;
+  border: 0;
+  border-radius: 8px;
+  background: #3b82f6;
+  color: #fff;
+  cursor: pointer;
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+kbd {
+  font-size: 12px;
+  opacity: 0.7;
+}
+
+#cards {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 12px;
+}
+
+.card {
+  background: var(--panel);
+  border-top: 4px solid var(--rarity);
+  border-radius: 8px;
+  padding: 12px;
+}
+
+.card img {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: contain;
+}
+
+.card h3 {
+  margin: 8px 0 4px;
+  font-size: 16px;
+}
+
+.card p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 14px;
+  font-variant-numeric: tabular-nums;
+}
+
+footer {
+  color: var(--muted);
+  font-size: 13px;
+}

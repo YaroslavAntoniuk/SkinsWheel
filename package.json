@@ -1,0 +1,24 @@
+{
+  "name": "kitted-wheel",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@10.11.0",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "sync-data": "tsx scripts/sync-data.ts",
+    "validate": "tsx scripts/validate.ts"
+  },
+  "devDependencies": {
+    "@types/node": "26.6.5",
+    "@vitest/coverage-v8": "5.0.5",
+    "tsx": "4.23.15",
+    "typescript": "7.0.2",
+    "vite": "8.3.4",
+    "vitest": "5.0.5"
+  }
+}
