@@ -1,4 +1,6 @@
 import skinsData from "../data/skins.json";
+import blueData from "../patterns/blue.json";
+import fadeData from "../patterns/fade.json";
 import { formatFloat } from "./engine/float";
 import {
   GROUPS,
@@ -9,6 +11,7 @@ import {
   parseSlots,
   type Slot,
 } from "./engine/loadout";
+import type { BlueFile, FadeFile, PatternData } from "./engine/patterns";
 import { createRng, newLoadoutCode, type Rng } from "./engine/rng";
 import type { Roll, Skin } from "./engine/types";
 import { isPossible } from "./engine/validate";
@@ -16,6 +19,7 @@ import { Wheel } from "./ui/wheel";
 import "./style.css";
 
 const skins = skinsData as Skin[];
+const patterns: PatternData = { fade: fadeData as FadeFile, blue: blueData as BlueFile };
 const DEFAULT_SLOTS: Slot[] = ["knife", "gloves"];
 /** How long the landed result stays on screen before the next wheel appears. */
 const RESULT_PAUSE_MS = 1400;
@@ -92,7 +96,7 @@ function start(): void {
 
 function enterSlot(): void {
   const slot = state.slots[slotIndex];
-  run = slot === undefined ? null : new SlotRun(slot, skins, rng);
+  run = slot === undefined ? null : new SlotRun(slot, skins, rng, patterns);
   showStage();
 }
 
@@ -122,14 +126,14 @@ async function spin(): Promise<void> {
 
   const index = run.spin();
   await wheel.spinTo(index, Math.random, spinMs());
-  $("caption").textContent = stage.options[index]!.label;
+  $("caption").textContent = run.caption ?? stage.options[index]!.label;
   await pause(RESULT_PAUSE_MS);
 
   if (run.result) {
-    const { skin, roll } = run.result;
+    const { skin, roll, pattern } = run.result;
     const problems = isPossible(skin, roll);
     if (problems.length > 0) throw new Error(`impossible roll: ${problems.join("; ")}`);
-    $("cards").append(card(skin, roll));
+    $("cards").append(card(skin, roll, pattern));
     slotIndex++;
     enterSlot();
   } else {
@@ -139,7 +143,7 @@ async function spin(): Promise<void> {
   render();
 }
 
-function card(skin: Skin, roll: Roll): HTMLElement {
+function card(skin: Skin, roll: Roll, pattern: string | null): HTMLElement {
   const el = document.createElement("article");
   el.className = "card";
   el.style.setProperty("--rarity", skin.rarityColor);
@@ -156,7 +160,8 @@ function card(skin: Skin, roll: Roll): HTMLElement {
   const parts: string[] = [];
   if (skin.phase) parts.push(skin.phase);
   if (roll.wear && roll.float !== null) parts.push(roll.wear, formatFloat(roll.float, 9));
-  if (roll.seed !== null) parts.push(`сід ${roll.seed}`);
+  if (pattern) parts.push(pattern);
+  else if (roll.seed !== null) parts.push(`сід ${roll.seed}`);
   meta.textContent = parts.join(" · ");
 
   el.append(img, name, meta);

@@ -14,6 +14,14 @@ export const SOUVENIR_CHANCE = 0.1;
 export const SEED_MIN = 0;
 export const SEED_MAX = 1000;
 
+/**
+ * Seed 1000 only comes out of trade-up contracts. Knives and gloves come from
+ * cases, so theirs stop at 999 (as in csgo-fade-percentage-calculator).
+ */
+export function seedMax(skin: Pick<Skin, "category">): number {
+  return skin.category === "knife" || skin.category === "gloves" ? SEED_MAX - 1 : SEED_MAX;
+}
+
 /** Equal-share pick from the pool (the "skin" wheel's default mode). */
 export function rollSkin(pool: readonly Skin[], rng: Rng): Skin {
   if (pool.length === 0) throw new Error("rollSkin: empty pool");
@@ -33,10 +41,10 @@ export function rollVariant(skin: Skin, rng: Rng): Variant {
   return "normal";
 }
 
-/** Paint seed, uniform over 0–1000 (1001 values). Vanilla knives have none. */
+/** Paint seed, uniform over 0–seedMax. Vanilla knives have none. */
 export function rollSeed(skin: Skin, rng: Rng): number | null {
   if (skin.finish === null) return null;
-  return randomInt(rng, SEED_MIN, SEED_MAX);
+  return randomInt(rng, SEED_MIN, seedMax(skin));
 }
 
 /**

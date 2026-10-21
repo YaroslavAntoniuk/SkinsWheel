@@ -1,5 +1,5 @@
 import { wearOdds, wearOf } from "./float";
-import { SEED_MAX, SEED_MIN } from "./roll";
+import { SEED_MIN, seedMax } from "./roll";
 import type { Category, PatternType, Roll, Side, Skin } from "./types";
 
 const CATEGORIES: readonly Category[] = ["rifle", "pistol", "smg", "heavy", "knife", "gloves", "equipment"];
@@ -119,8 +119,8 @@ export function isPossible(skin: Skin, roll: Roll): string[] {
 
   if (skin.finish === null) {
     if (roll.seed !== null) errors.push("vanilla knife cannot have a seed");
-  } else if (roll.seed === null || !Number.isInteger(roll.seed) || roll.seed < SEED_MIN || roll.seed > SEED_MAX) {
-    errors.push(`seed ${roll.seed} outside ${SEED_MIN}–${SEED_MAX}`);
+  } else if (roll.seed === null || !Number.isInteger(roll.seed) || roll.seed < SEED_MIN || roll.seed > seedMax(skin)) {
+    errors.push(`seed ${roll.seed} outside ${SEED_MIN}–${seedMax(skin)}`);
   }
 
   return errors;

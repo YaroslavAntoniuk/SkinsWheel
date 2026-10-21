@@ -3,8 +3,8 @@ import { defineConfig } from "vitest/config";
 export default defineConfig({
   // Relative asset paths so the build works from GitHub Pages' /<repo>/ subpath.
   base: "./",
-  // skins.json is bundled on purpose so the wheel works offline in OBS.
-  build: { chunkSizeWarningLimit: 1500 },
+  // data/ and patterns/ are bundled on purpose so the wheel works offline in OBS.
+  build: { chunkSizeWarningLimit: 2000 },
   test: {
     environment: "node",
     coverage: {
