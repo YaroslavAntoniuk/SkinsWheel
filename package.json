@@ -11,6 +11,7 @@
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
     "sync-data": "tsx scripts/sync-data.ts",
+    "sync-patterns": "tsx scripts/sync-patterns.ts",
     "validate": "tsx scripts/validate.ts"
   },
   "devDependencies": {

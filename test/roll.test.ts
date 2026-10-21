@@ -77,6 +77,9 @@ describe("rolls", () => {
       max = Math.max(max, seed);
     }
     expect([min, max]).toEqual([0, 1000]);
+    let knifeMax = -Infinity;
+    for (let i = 0; i < N; i++) knifeMax = Math.max(knifeMax, rollSeed(rubyKarambit, rng)!);
+    expect(knifeMax).toBe(999);
     expect(rollSeed(vanillaKarambit, rng)).toBeNull();
     expect(rollItem(vanillaKarambit, rng)).toMatchObject({ float: null, wear: null, seed: null });
   });

@@ -1,19 +1,23 @@
-// CI gate: checks every record in data/skins.json, then auto-spins the engine
-// and checks every result with isPossible.
+// CI gate: checks every record in data/skins.json and every pattern table,
+// then auto-spins the engine and checks every result with isPossible.
 //
 //   pnpm validate [spins=10000]
 
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
+import { validatePatterns, type PatternData } from "../src/engine/patterns";
 import { createRng } from "../src/engine/rng";
 import { rollItem, rollSkin } from "../src/engine/roll";
 import type { Skin } from "../src/engine/types";
 import { isPossible, validateDataset } from "../src/engine/validate";
 
 const spins = Number(process.argv[2] ?? 10_000);
-const skins: Skin[] = JSON.parse(readFileSync(join(import.meta.dirname, "..", "data", "skins.json"), "utf8"));
+const root = join(import.meta.dirname, "..");
+const readJson = (...path: string[]) => JSON.parse(readFileSync(join(root, ...path), "utf8"));
+const skins: Skin[] = readJson("data", "skins.json");
+const patterns: PatternData = { fade: readJson("patterns", "fade.json"), blue: readJson("patterns", "blue.json") };
 
-const errors = validateDataset(skins);
+const errors = [...validateDataset(skins), ...validatePatterns(skins, patterns)];
 
 const rng = createRng("validate");
 for (let i = 0; i < spins && errors.length < 50; i++) {
