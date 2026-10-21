@@ -3,23 +3,44 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Kitted Loadout Wheel</title>
+    <title>SkinsWheel</title>
   </head>
   <body>
     <main>
       <header>
-        <h1 id="slot"></h1>
-        <p class="code">Код лоадауту: <span id="code"></span></p>
+        <p class="who"><span id="nick"></span><span id="progress"></span></p>
+        <h1 id="title"></h1>
       </header>
-      <canvas id="wheel" width="720" height="720"></canvas>
+      <div class="stage">
+        <canvas id="wheel" width="1000" height="1000"></canvas>
+        <p id="caption" aria-live="polite"></p>
+      </div>
       <div class="controls">
         <button id="spin" type="button">Крутити <kbd>Space</kbd></button>
-        <button id="new" type="button">Новий глядач <kbd>N</kbd></button>
-        <label><input id="fast" type="checkbox" /> Швидко (1.5 с)</label>
+        <button id="again" type="button" class="secondary">Новий лоадаут <kbd>N</kbd></button>
+        <button id="open-settings" type="button" class="secondary">Налаштування <kbd>S</kbd></button>
       </div>
-      <section id="cards" aria-live="polite"></section>
-      <footer>Симуляція, без виграшів. Не пов'язано з Valve.</footer>
+      <section id="cards"></section>
+      <footer>Симуляція, без виграшів. Не пов'язано з Valve. Код: <span id="code"></span></footer>
     </main>
+
+    <dialog id="settings">
+      <form method="dialog" id="settings-form">
+        <h2>Що крутимо</h2>
+        <div class="presets" id="presets"></div>
+        <ol id="slots"></ol>
+        <button type="button" id="add-slot" class="secondary">+ Додати слот</button>
+
+        <label class="field">Нік глядача <input id="nick-input" type="text" maxlength="32" autocomplete="off" /></label>
+        <label class="check"><input id="fast" type="checkbox" /> Швидкий спін (1.5 с замість 5 с)</label>
+
+        <div class="dialog-actions">
+          <button type="submit" value="cancel" class="secondary">Скасувати</button>
+          <button type="submit" value="apply" id="apply">Почати</button>
+        </div>
+      </form>
+    </dialog>
+
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>
