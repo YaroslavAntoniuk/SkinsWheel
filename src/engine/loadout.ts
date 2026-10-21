@@ -1,11 +1,13 @@
 import { wearOdds } from "./float";
+import { patternWheel, type PatternData, type PatternWheel } from "./patterns";
 import type { Rng } from "./rng";
 import { rollItem } from "./roll";
 import type { Roll, Skin, Wear } from "./types";
 
 // A loadout is a list of slots chosen in settings. Each slot is spun as a
 // chain of wheels: weapon (only when the slot allows several) → skin →
-// Doppler phase (only for Doppler finishes) → wear (not for vanilla knives).
+// Doppler phase (only for Doppler finishes) → wear (not for vanilla knives) →
+// pattern (only where patterns/ has a table for that weapon and finish).
 
 export type Group = "knife" | "gloves" | "rifle" | "sniper" | "pistol" | "smg" | "heavy";
 
@@ -96,7 +98,7 @@ export interface Option {
   image?: string;
 }
 
-export type StageKind = "weapon" | "skin" | "phase" | "wear";
+export type StageKind = "weapon" | "skin" | "phase" | "wear" | "pattern";
 
 export interface Stage {
   kind: StageKind;
@@ -132,7 +134,9 @@ export function finishGroups(weapon: string, skins: readonly Skin[]): Skin[][] {
  */
 export class SlotRun {
   stage: Stage | null = null;
-  result: { skin: Skin; roll: Roll } | null = null;
+  result: { skin: Skin; roll: Roll; pattern: string | null } | null = null;
+  /** What the last spin landed on, in words, for the line under the wheel. */
+  caption: string | null = null;
 
   private weapon: WeaponInfo | null = null;
   private weaponChoices: WeaponInfo[] = [];
@@ -141,11 +145,13 @@ export class SlotRun {
   private skin: Skin | null = null;
   private roll: Roll | null = null;
   private wearOrder: Wear[] = [];
+  private pattern: PatternWheel | null = null;
 
   constructor(
     readonly slot: Slot,
     private readonly skins: readonly Skin[],
     private readonly rng: Rng,
+    private readonly patterns: PatternData = {},
   ) {
     const weapons = weaponsFor(slot, skins);
     if (weapons.length === 0) throw new Error(`no skins for slot ${slot}`);
@@ -160,12 +166,19 @@ export class SlotRun {
     }
   }
 
-
   /** Picks where the current wheel lands, advances, and returns that index. */
   spin(): number {
     const stage = this.stage;
     if (!stage) throw new Error("slot already finished");
-    const index = stage.kind === "wear" ? this.wearIndex() : Math.floor(this.rng() * stage.options.length);
+    // Wear and pattern were decided by rollItem; those wheels land on the rolled value.
+    const index =
+      stage.kind === "wear"
+        ? this.wearOrder.indexOf(this.roll!.wear!)
+        : stage.kind === "pattern"
+          ? this.pattern!.tierOf(this.roll!.seed!)
+          : Math.floor(this.rng() * stage.options.length);
+    this.caption =
+      stage.kind === "pattern" ? this.pattern!.describe(this.roll!.seed!) : stage.options[index]!.label;
 
     switch (stage.kind) {
       case "weapon":
@@ -181,6 +194,10 @@ export class SlotRun {
         this.enterWear(this.phases[index]!);
         break;
       case "wear":
+        if (this.pattern) this.enterPattern();
+        else this.finish();
+        break;
+      case "pattern":
         this.finish();
         break;
     }
@@ -211,6 +228,7 @@ export class SlotRun {
 
   private enterWear(skin: Skin): void {
     this.skin = skin;
+    this.pattern = patternWheel(skin, this.patterns);
     // The whole item is decided here; the wear wheel then lands on its wear.
     this.roll = rollItem(skin, this.rng);
     if (this.roll.wear === null) {
@@ -226,13 +244,27 @@ export class SlotRun {
     this.wearOrder = odds.map(([wear]) => wear);
   }
 
-
-  private wearIndex(): number {
-    return this.wearOrder.indexOf(this.roll!.wear!);
+  private enterPattern(): void {
+    const skin = this.skin!;
+    const total = this.pattern!.tiers.reduce((n, t) => n + t.seeds.length, 0);
+    this.stage = {
+      kind: "pattern",
+      title: `${skin.name.replace(/^★ /, "")}: паттерн (${this.pattern!.metric})`,
+      options: this.pattern!.tiers.map((t) => ({
+        label: `${t.label} · ${((t.seeds.length / total) * 100).toFixed(1)}%`,
+        color: t.color,
+        weight: t.seeds.length,
+      })),
+    };
   }
 
   private finish(): void {
-    this.result = { skin: this.skin!, roll: this.roll! };
+    const seed = this.roll!.seed;
+    this.result = {
+      skin: this.skin!,
+      roll: this.roll!,
+      pattern: this.pattern && seed !== null ? this.pattern.describe(seed) : null,
+    };
     this.stage = null;
   }
 }
