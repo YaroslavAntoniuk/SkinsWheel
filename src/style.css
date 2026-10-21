@@ -4,6 +4,8 @@
   --fg: #e8eaf0;
   --muted: #8a90a2;
   --panel: #161a23;
+  --line: #2a3040;
+  --accent: #3b82f6;
 }
 
 * {
@@ -22,7 +24,7 @@ main {
   margin: 0 auto;
   padding: 16px;
   display: grid;
-  gap: 16px;
+  gap: 12px;
   justify-items: center;
 }
 
@@ -30,27 +32,49 @@ header {
   text-align: center;
 }
 
-h1 {
+.who {
   margin: 0;
-  font-size: clamp(28px, 6vw, 48px);
+  color: var(--muted);
+  display: flex;
+  gap: 12px;
+  justify-content: center;
 }
 
-.code {
+#nick {
+  color: var(--fg);
+  font-weight: 700;
+}
+
+h1 {
   margin: 4px 0 0;
-  color: var(--muted);
+  font-size: clamp(26px, 5.5vw, 52px);
+  line-height: 1.1;
+}
+
+.stage {
+  width: min(100%, 760px);
+  display: grid;
+  justify-items: center;
 }
 
 canvas {
-  width: min(100%, 720px);
+  width: 100%;
   height: auto;
   aspect-ratio: 1;
+}
+
+#caption {
+  min-height: 1.3em;
+  margin: 8px 0 0;
+  font-size: clamp(24px, 5vw, 44px);
+  font-weight: 800;
+  text-align: center;
 }
 
 .controls {
   display: flex;
   flex-wrap: wrap;
-  gap: 12px;
-  align-items: center;
+  gap: 10px;
   justify-content: center;
 }
 
@@ -60,13 +84,18 @@ button {
   padding: 12px 20px;
   border: 0;
   border-radius: 8px;
-  background: #3b82f6;
+  background: var(--accent);
   color: #fff;
   cursor: pointer;
 }
 
+button.secondary {
+  background: var(--panel);
+  border: 1px solid var(--line);
+}
+
 button:disabled {
-  opacity: 0.5;
+  opacity: 0.45;
   cursor: default;
 }
 
@@ -78,7 +107,7 @@ kbd {
 #cards {
   width: 100%;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
   gap: 12px;
 }
 
@@ -110,4 +139,94 @@ kbd {
 footer {
   color: var(--muted);
   font-size: 13px;
+  text-align: center;
+}
+
+/* Settings */
+
+dialog {
+  width: min(560px, calc(100% - 32px));
+  max-height: calc(100% - 32px);
+  padding: 20px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--panel);
+  color: var(--fg);
+}
+
+dialog::backdrop {
+  background: rgb(0 0 0 / 0.6);
+}
+
+dialog h2 {
+  margin: 0 0 12px;
+}
+
+.presets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.chip {
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  font-size: 14px;
+}
+
+#slots {
+  margin: 0 0 12px;
+  padding-left: 24px;
+  display: grid;
+  gap: 8px;
+}
+
+#slots li {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+select,
+input[type="text"] {
+  font: inherit;
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  background: var(--bg);
+  color: var(--fg);
+}
+
+#slots select {
+  flex: 1;
+  min-width: 0;
+}
+
+button.icon {
+  padding: 8px 12px;
+  background: var(--bg);
+  border: 1px solid var(--line);
+}
+
+.field {
+  display: grid;
+  gap: 4px;
+  margin-top: 16px;
+}
+
+.check {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-top: 12px;
+}
+
+.dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 20px;
 }
